@@ -10,12 +10,20 @@
 
 #include "SRAD_PHX.h"
 
-void incrementTime() {
+void FLIGHT::incrementTime() {
+    static uint64_t newRunningTime = millis();
+    delta_t = newRunningTime_ms - runningTime_ms;
+    output.totalTime_ms = newRunningTime;
+    runningTime += delta_t;
+}
+void FLIGHT::writeSD(bool headers, File& outputFile) {
+    if(headers) {
+        // write headers
+    }
 
 }
-void writeSD() {
+void FLIGHT::writeXBEE(bool headers) {
+    if(headers) {
 
-}
-void writeXBEE() {
-    
+    }
 }

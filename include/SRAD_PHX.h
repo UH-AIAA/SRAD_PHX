@@ -2,6 +2,7 @@
 #define SRAD_PHX_H
 
 #include <Arduino.h>
+#include <SD.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_GPS.h>
 #include <Adafruit_ADXL375.h>
@@ -24,6 +25,8 @@ struct FlightData {
     float off_alt, prev_alt, v_vel;
     Vector3 angular_offset;             // GPS has some orientation bias -- this corrects when calibrated.
     bool offset_calibrated;             // flag to tell us if we've configured this
+
+    uint64_t totalTime_ms;
 };
 
 enum STATES {
@@ -41,6 +44,7 @@ class FLIGHT {
         : accel_liftoff_threshold(a1), accel_liftoff_time_threshold(a2), 
         land_time_threshold(l1), land_altitude_threshold(l2), output(o) {
             STATE = STATES::PRE_NO_CAL;
+            runningTime_ms = 0;
         }
         // constructor to automatically cast integer outputs from helpfer functions
         // FLIGHT(int stateVal) :  STATE(static_cast<STATES>(stateVal)) {}
@@ -52,8 +56,8 @@ class FLIGHT {
         bool read_ADXL(Adafruit_ADXL375 &);
         bool read_BNO(Adafruit_BNO055 &);
         void incrementTime();
-        void writeSD();
-        void writeXBEE();
+        void writeSD(bool, File&);
+        void writeXBEE(bool);
 
         // helper functions
         bool isCal();
@@ -67,10 +71,13 @@ class FLIGHT {
         int accel_liftoff_time_threshold;   // MILLISECONDS
         int land_time_threshold;            // MILLISECONDS
         int land_altitude_threshold;        // METERS
+        
         FlightData& output;
+        uint16_t deltaTime_ms;
+        uint64_t runningTime_ms;
 
         bool calibrated = false;
-        STATES STATE = STATES::PRE_NO_CAL;
+        STATES STATE;
 };
 
 #endif
