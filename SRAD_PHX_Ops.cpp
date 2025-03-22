@@ -11,7 +11,7 @@
 #include "SRAD_PHX.h"
 
 void FLIGHT::incrementTime() {
-    static uint64_t newRunningTime_ms = millis();
+    uint64_t newRunningTime_ms = millis();
     deltaTime_ms = newRunningTime_ms - runningTime_ms;
     runningTime_ms = newRunningTime_ms;
     output.totalTime_ms = newRunningTime_ms;
