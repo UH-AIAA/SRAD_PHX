@@ -40,9 +40,9 @@ enum STATES {
 class FLIGHT {
     public:
         // initial constructor
-        FLIGHT(int a1, int a2, int l1, int l2, String h, FlightData& o) 
+        FLIGHT(int a1, int a2, int l1, int l2, String h, Adafruit_GPS& g, FlightData& o) 
         : accel_liftoff_threshold(a1), accel_liftoff_time_threshold(a2), 
-        land_time_threshold(l1), land_altitude_threshold(l2), data_header(h), output(o) {
+        land_time_threshold(l1), land_altitude_threshold(l2), data_header(h), last_gps(g), output(o) {
             STATE = STATES::PRE_NO_CAL;
             runningTime_ms = 0;
         }
