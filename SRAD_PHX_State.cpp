@@ -10,6 +10,9 @@
 
 #include "SRAD_PHX.h"
 
+/**
+ * Calculates flight state using cascading switch case and helper function
+ */
 void FLIGHT::calculateState() {
     switch(STATE) {
         case(STATES::PRE_NO_CAL):
@@ -37,21 +40,29 @@ void FLIGHT::calculateState() {
             break;
     }
 }
-
+/**
+ * Helper function to check if sensors are calibrated
+ * @return returns true if sensors are calibrated
+ */
 bool FLIGHT::isCal() {
     return calibrated;
 }
+
+/**
+ * Helper function to check if rocket is ascending
+ * @return returns true if rocket is ascending
+ */
 bool FLIGHT::isAscent() {
-    static uint32_t liftoff_timer;
+    static uint32_t liftoffTimer_ms;
     
     if(output.lsm_acc.z > accel_liftoff_threshold) {
-        // increment liftoff timer with delta time when completed
+        liftoffTimer_ms += deltaTime_ms;
 
-        if(liftoff_timer > accel_liftoff_time_threshold) {
+        if(liftoffTimer_ms  > accel_liftoff_time_threshold) {
             return true;
         }
     } else {
-        liftoff_timer = 0;
+        liftoffTimer_ms = 0;
     }
     return false;
 }
