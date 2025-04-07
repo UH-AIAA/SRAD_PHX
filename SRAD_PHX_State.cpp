@@ -11,7 +11,11 @@
 #include "SRAD_PHX.h"
 
 /**
- * Calculates flight state using cascading switch case and helper function
+ * @brief gets flight state
+ * 
+ * The function uses a cascading switch case to determine which stage
+ * of flight the rocket is in. At each stage, it calls a helper function
+ * to determine if it should move to the next one.
  */
 void FLIGHT::calculateState() {
     switch(STATE) {

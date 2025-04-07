@@ -10,6 +10,17 @@
 
 #include "SRAD_PHX.h"
 
+/** 
+ * @brief tracks time during flight
+ * 
+ * This function calls the millis() function from the
+ * Arduino library to track milliseconds since the board
+ * was powered on. It updates three variables: 
+ * 
+ * 1. `deltaTime_ms`
+ * 2. `runningTime_ms`
+ * 3. `output.totalTime_ms`
+ */
 void FLIGHT::incrementTime() {
     uint64_t newRunningTime_ms = millis();
     deltaTime_ms = newRunningTime_ms - runningTime_ms;
@@ -17,6 +28,13 @@ void FLIGHT::incrementTime() {
     output.totalTime_ms = newRunningTime_ms;
 }
 
+/**
+ * @brief writes data stored in `output` to file
+ * @param headers If true, function will only right headers and return early
+ * @param File A reference to Arduino file type from SD.h
+ * 
+ * This function can write data headers or current data to SD card.
+ */
 void FLIGHT::writeSD(bool headers, File& outputFile) {
     if(headers) {
         outputFile.println(data_header);
@@ -56,6 +74,13 @@ void FLIGHT::writeSD(bool headers, File& outputFile) {
     return;
 }
 
+/**
+ * @brief writes data stored in `output` to a serial port
+ * @param headers If true, function will only right headers and return early
+ * @param Serial1 The serial port to write data to
+ * 
+ * This function can write data headers or current data to a serial port.
+ */
 void FLIGHT::writeSERIAL(bool headers, Stream &Serial1) {
     if(headers) {
         Serial1.println(data_header);
