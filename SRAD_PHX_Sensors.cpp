@@ -11,17 +11,19 @@
 #include "SRAD_PHX.h"
 
 /**
- * Reads the Adafruit LSM6DS032 6 DoF Accelerometer/Gyroscope
+ * Reads the Adafruit LSM6DS032 6 DoF Accelerometer/Gyroscope.
+ * It's index in the sensorStatus is 0.
  * @param LSM Referenece to initialized sensor instance
  * @returns Returns `true` if the operation succeeds, False if the operation fails
  */
-bool FLIGHT::read_LSM(Adafruit_LSM6DSO32 &LSM) {
+uint8_t FLIGHT::read_LSM(Adafruit_LSM6DSO32 &LSM) {
     sensors_event_t accel, gyro, temp;
 
   // Attempt to read sensor data
     if(!LSM.getEvent(&accel, &gyro, &temp))
     {
-        return false;  // Return false if read fails
+        output.sensorStatus.set(0);
+        return 1;  // Return true if read fails
     }
 
   // Store gyroscope data
@@ -37,61 +39,75 @@ bool FLIGHT::read_LSM(Adafruit_LSM6DSO32 &LSM) {
     // Store temperature data
     output.lsm_temp = float(temp.temperature);
 
-    return true;  // Return true if read succeeds
+    output.sensorStatus.reset(0);
+    return 0;  // Return false if read succeeds
 }
 
 /**
  * Reads the Adafruit BMP388 Precision Barometer and Altimeter
+ * It's index in sensorStatus is 1.
  * @param BMP Reference to initialized sensor instance\
  * @return Returns `true` if operation succeeds
  */
-bool FLIGHT::read_BMP(Adafruit_BMP3XX &BMP) {
+uint8_t FLIGHT::read_BMP(Adafruit_BMP3XX &BMP) {
     if (!BMP.performReading()) {
-        return false;
+        output.sensorStatus.set(1);
+        return 1;
     }
     output.bmp_temp = BMP.temperature;
     output.bmp_press = BMP.pressure;
     output.bmp_alt = BMP.readAltitude(1013.25) - output.off_alt;
-    return true;
+
+    output.sensorStatus.reset(1);
+    return 0;
 }
 
 /**
  * Reads the Adafruit ADXL_375 High-G Accelerometer
+ * It's index in sensor status is 2.
  * @param ADXL Reference to initialized sensor instance
  * @return Returns `true`if operation succeeds
  */
-bool FLIGHT::read_ADXL(Adafruit_ADXL375 &ADXL) {
+uint8_t FLIGHT::read_ADXL(Adafruit_ADXL375 &ADXL) {
     sensors_event_t event;
     if (!ADXL.getEvent(&event)) {
-        return false;
+        output.sensorStatus.set(2);
+        return 1;
     }
     output.adxl_acc.x = event.acceleration.x;
     output.adxl_acc.y = event.acceleration.y;
     output.adxl_acc.z = event.acceleration.z;
 
     output.adxl_temp = float(event.temperature);
-    return true;
+
+    output.sensorStatus.reset(2);
+    return 0;
 }
 
 /**
  * Returns Adafruit BNO055 Absolute Orientation Sensor
+ * It's index in sensorStatus is 3.
  * @param BNO Initialized sensor instance
  * @return Returns `true` if operation succeeds
  */
-bool FLIGHT::read_BNO(Adafruit_BNO055 &BNO) {
+uint8_t FLIGHT::read_BNO(Adafruit_BNO055 &BNO) {
     sensors_event_t orientationData, angVelocityData, magnetometerData, accelerometerData;
 
     if (!BNO.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER)) {
-        return false;
+        output.sensorStatus.set(3);
+        return 1;
     }
     if (!BNO.getEvent(&angVelocityData, Adafruit_BNO055::VECTOR_GYROSCOPE)) {
-        return false;
+        output.sensorStatus.set(3);
+        return 1;
     }
     if (!BNO.getEvent(&magnetometerData, Adafruit_BNO055::VECTOR_MAGNETOMETER)) {
-        return false;
+        output.sensorStatus.set(3);
+        return 1;
     }
     if (!BNO.getEvent(&accelerometerData, Adafruit_BNO055::VECTOR_ACCELEROMETER)) {
-        return false;
+        output.sensorStatus.set(3);
+        return 1;
     }
 
     imu::Quaternion quat = BNO.getQuat();
@@ -109,30 +125,36 @@ bool FLIGHT::read_BNO(Adafruit_BNO055 &BNO) {
     output.bno_acc.z = accelerometerData.acceleration.z;
 
     output.bno_temp = float(BNO.getTemp());
-    return true;
+
+    output.sensorStatus.reset(3);
+    return 0;
 }
 
 /**
  * Reads Adafruit Ultimate GPS Breakout V3
+ * It's index in sensorStatus is 4.
  * @param GPS Initialized Sensor instance
  * @return Returns `false` if GPS isn't ready in 500ms or no satellite fix, returns `true` otherwise
  */
-bool FLIGHT::read_GPS(Adafruit_GPS &GPS) {
+uint8_t FLIGHT::read_GPS(Adafruit_GPS &GPS) {
     last_gps = GPS;                     // update the last-used GPS pointer
     if(!GPS.fix) {
-        return false;
+        output.sensorStatus.set(4);
+        return 1;
     }
     uint32_t startms = millis();        // starting time
     uint32_t timeout = startms + 500;   // if GPS doesn't receive new NMEA after 500ms, times out to prevent blocking
     while (true) {
         startms = millis();
         if(startms > timeout) {
-            return false;
+            output.sensorStatus.set(4);
+            return 1;
         } else if(GPS.available()) {
             GPS.read();
             if (GPS.newNMEAreceived()) {
                 GPS.parse(GPS.lastNMEA());
-                return true;
+                output.sensorStatus.reset(4);
+                return 0;
             }
         }
     }

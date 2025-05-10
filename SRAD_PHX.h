@@ -1,6 +1,8 @@
 #ifndef SRAD_PHX_H
 #define SRAD_PHX_H
 
+#include<bitset>
+
 #include <Arduino.h>
 #include <SD.h>
 #include <Adafruit_Sensor.h>
@@ -26,6 +28,7 @@ struct FlightData {
     Vector3 angular_offset;             // GPS has some orientation bias -- this corrects when calibrated.
     bool offset_calibrated;             // flag to tell us if we've configured this
 
+    std::bitset<5> sensorStatus;
     uint64_t totalTime_ms;
 };
 
@@ -51,11 +54,11 @@ class FLIGHT {
         
         // high level functions
         void calculateState();
-        bool read_LSM(Adafruit_LSM6DSO32 &);
-        bool read_BMP(Adafruit_BMP3XX &);
-        bool read_ADXL(Adafruit_ADXL375 &);
-        bool read_BNO(Adafruit_BNO055 &);
-        bool read_GPS(Adafruit_GPS &);
+        uint8_t read_LSM(Adafruit_LSM6DSO32 &);
+        uint8_t read_BMP(Adafruit_BMP3XX &);
+        uint8_t read_ADXL(Adafruit_ADXL375 &);
+        uint8_t read_BNO(Adafruit_BNO055 &);
+        uint8_t read_GPS(Adafruit_GPS &);
         void incrementTime();
         void writeSD(bool, File &);
         void writeSERIAL(bool, Stream &);  // Strema allows Teensy USB as well

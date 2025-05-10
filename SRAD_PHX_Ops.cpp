@@ -69,6 +69,11 @@ void FLIGHT::writeSD(bool headers, File& outputFile) {
     outputFile.print(output.adxl_temp, 2); outputFile.print(",");
     outputFile.print(output.bno_temp, 2); outputFile.print(",");
     outputFile.print(output.bmp_temp, 2); outputFile.println();
+    outputFile.print(output.sensorStatus.test(0)); outputFile.println();
+    outputFile.print(output.sensorStatus.test(1)); outputFile.println();
+    outputFile.print(output.sensorStatus.test(2)); outputFile.println();
+    outputFile.print(output.sensorStatus.test(3)); outputFile.println();
+    outputFile.print(output.sensorStatus.test(4)); outputFile.println();
     outputFile.flush();
 
     return;
@@ -115,6 +120,11 @@ void FLIGHT::writeSERIAL(bool headers, Stream &Serial1) {
     Serial1.print(output.adxl_temp, 2); Serial1.print(",");
     Serial1.print(output.bno_temp, 2); Serial1.print(",");
     Serial1.print(output.bmp_temp, 2); Serial1.println();
+    Serial1.print(output.sensorStatus.test(0)); Serial1.println();
+    Serial1.print(output.sensorStatus.test(1)); Serial1.println();
+    Serial1.print(output.sensorStatus.test(2)); Serial1.println();
+    Serial1.print(output.sensorStatus.test(3)); Serial1.println();
+    Serial1.print(output.sensorStatus.test(4)); Serial1.println();
     Serial1.flush();
 
     return;
