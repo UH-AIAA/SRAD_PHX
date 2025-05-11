@@ -54,19 +54,35 @@ bool FLIGHT::isCal() {
 
 /**
  * Helper function to check if rocket is ascending
+ * Fault tolerant for failure of LSM or ADXL.
+ * 1. If LSM fails, default to ADXL
+ * 2. If ADXL fails, default to BMP
  * @return returns true if rocket is ascending
  */
 bool FLIGHT::isAscent() {
     static uint32_t liftoffTimer_ms;
-    
-    if(output.lsm_acc.z > accel_liftoff_threshold) {
-        liftoffTimer_ms += deltaTime_ms;
+    if(!output.sensorStatus.test(0)) {
+        if(output.lsm_acc.z > accel_liftoff_threshold) {
+            liftoffTimer_ms += deltaTime_ms;
 
-        if(liftoffTimer_ms  > accel_liftoff_time_threshold) {
-            return true;
+            if(liftoffTimer_ms  > accel_liftoff_time_threshold) {
+                return true;
+            }
+        } else {
+            liftoffTimer_ms = 0;
         }
-    } else {
-        liftoffTimer_ms = 0;
+    } else if (output.adxl_acc.z > accel_liftoff_threshold) {  // if primary accel is known to be bad, check secondary
+        if(output.lsm_acc.z > accel_liftoff_threshold) {
+            liftoffTimer_ms += deltaTime_ms;
+
+            if(liftoffTimer_ms  > accel_liftoff_time_threshold) {
+                return true;
+            }
+        } else {
+            liftoffTimer_ms = 0;
+        }
+    } else {  // if both accelerometers are bad, use altimeter
+        // check if altitude is notably higher than 0 (or alt threshold)
     }
     return false;
 }
@@ -78,5 +94,7 @@ bool FLIGHT::isLanded() {
 }
 
 bool FLIGHT::calibrate() {
-    
+    // calibrate for GPS offset, possibly of the earth spinning?
+    //
+    // additionally calibrate altitude offset
 }
