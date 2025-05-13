@@ -137,25 +137,33 @@ uint8_t FLIGHT::read_BNO(Adafruit_BNO055 &BNO) {
  * @return Returns `false` if GPS isn't ready in 500ms or no satellite fix, returns `true` otherwise
  */
 uint8_t FLIGHT::read_GPS(Adafruit_GPS &GPS) {
-    last_gps = GPS;                     // update the last-used GPS pointer
-    if(!GPS.fix) {
-        output.sensorStatus.set(4);
-        return 1;
-    }
-    uint32_t startms = millis();        // starting time
-    uint32_t timeout = startms + 500;   // if GPS doesn't receive new NMEA after 500ms, times out to prevent blocking
-    while (true) {
-        startms = millis();
-        if(startms > timeout) {
-            output.sensorStatus.set(4);
-            return 1;
-        } else if(GPS.available()) {
-            GPS.read();
+    last_gps = GPS;
+    
+    uint32_t startms = millis();
+    uint32_t timeout = startms + 500;
+
+    while (millis() < timeout) {
+        while (GPS.available()) {
+            char c = GPS.read();
+
             if (GPS.newNMEAreceived()) {
-                GPS.parse(GPS.lastNMEA());
-                output.sensorStatus.reset(4);
-                return 0;
+                // Serial.println(GPS.lastNMEA());
+                if (!GPS.parse(GPS.lastNMEA())) {
+                    continue;
+                }
+
+                if (GPS.fix && GPS.satellites > 0) {
+                    // Serial.print("Satellites: ");
+                    // Serial.println(GPS.satellites);
+                    output.sensorStatus.reset(4);
+                    return 0;
+                }
             }
         }
     }
+
+    Serial.println("GPS timeout or no fix");
+    output.sensorStatus.set(4);
+    return 1;
 }
+
