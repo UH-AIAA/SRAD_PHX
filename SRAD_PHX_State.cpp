@@ -96,7 +96,7 @@ bool FLIGHT::isLanded() {
                                                                 // then return True to indicate the rocket is landed
         return true;
     }
-    else{
+    else{ 
         return false;
     }
 }
