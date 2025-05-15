@@ -24,7 +24,7 @@ struct FlightData {
     float bmp_temp, bmp_press, bmp_alt;             // Barometer Pressure/Altitude (BMP388 Chip)
 
     // data processing variables
-    float off_alt, prev_alt, v_vel;
+    float off_alt, prev_alt, v_vel, offset_alt_fixed_temp;
     Vector3 angular_offset;             // GPS has some orientation bias -- this corrects when calibrated.
     bool offset_calibrated;             // flag to tell us if we've configured this
 
@@ -69,6 +69,7 @@ class FLIGHT {
         bool isDescent();
         bool isLanded();
         bool calibrate();
+        bool AltitudeCalibrate();
 
     private:
         int accel_liftoff_threshold;        // METERS PER SECOND^2

@@ -56,7 +56,16 @@ uint8_t FLIGHT::read_BMP(Adafruit_BMP3XX &BMP) {
     }
     output.bmp_temp = BMP.temperature;
     output.bmp_press = BMP.pressure;
-    output.bmp_alt = BMP.readAltitude(1013.25) - output.off_alt;
+    output.offset_alt_fixed_temp = BMP.readAltitude(1013.25); //setting offset to the height right before flight?
+    output.bmp_alt = BMP.readAltitude(1013.25) - output.off_alt; //sea level can fluctuate under +/- 7 
+                                                                // depends on the data of the day. 
+                                                                //But 1013.25 is an acceptable value.
+                                                                //What is the value of 'output.off_alt'?
+                                                                //We can set bmp_alt straight to Bmp.read.... to make it 
+                                                                //uncalibrated and easier to find the altitude when it is launching
+
+    
+
 
     output.sensorStatus.reset(1);
     return 0;

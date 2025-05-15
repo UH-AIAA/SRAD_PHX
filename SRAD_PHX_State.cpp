@@ -10,6 +10,7 @@
 
 #include "SRAD_PHX.h"
 
+
 /**
  * @brief gets flight state
  * 
@@ -28,6 +29,7 @@ void FLIGHT::calculateState() {
         case(STATES::PRE_CAL):
             if(isAscent()) {
                 STATE = STATES::FLIGHT_ASCENT;
+                AltitudeCalibrate(); // Recalibrating the altitude of the rocket when it is launching
             }
             break;
 
@@ -97,4 +99,18 @@ bool FLIGHT::calibrate() {
     // calibrate for GPS offset, possibly of the earth spinning?
     //
     // additionally calibrate altitude offset
+}
+bool FLIGHT::AltitudeCalibrate(){
+    // save our current altitude
+    // add the distance to the ground in
+    // save to the altitude offset variable
+ //offset = height from certain location to the sea (chart map) + height from the sensor to the bottom of the rocket
+
+    const float fixed_offset = output.offset_alt_fixed_temp;//setting the offset to a separate constant variable
+    while (output.bmp_alt >= fixed_offset){                 // if the current altidue is >/= to the constant offset 
+    output.bmp_alt = output.bmp_alt - fixed_offset;         //calculate new altitude = current alt - offset
+    break;                                                  // stop the loop so altitude does not keep subtracting offset
+    //may be print the altitude or send it to the ground station or something?
+    }
+
 }
