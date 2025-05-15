@@ -92,7 +92,13 @@ bool FLIGHT::isDescent() {
 
 }
 bool FLIGHT::isLanded() {
-
+    if (output.bmp_alt <=  output.offset_alt_fixed_temp + 10){ // if the current altitude is less than the offset altitude + 10m 
+                                                                // then return True to indicate the rocket is landed
+        return true;
+    }
+    else{
+        return false;
+    }
 }
 
 bool FLIGHT::calibrate() {
