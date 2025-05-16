@@ -12,6 +12,7 @@
 #include <Adafruit_BMP3XX.h>
 #include <Adafruit_LSM6DSO32.h>
 
+#include <SerialTransfer.h>
 #include <Quaternion.h>
 
 struct FlightData {
@@ -23,10 +24,18 @@ struct FlightData {
     float lsm_temp, adxl_temp, bno_temp;            // Temperature (all chips that record)
     float bmp_temp, bmp_press, bmp_alt;             // Barometer Pressure/Altitude (BMP388 Chip)
 
-    // data processing variables
-    float off_alt, prev_alt, v_vel;
-    Vector3 angular_offset;             // GPS has some orientation bias -- this corrects when calibrated.
-    bool offset_calibrated;             // flag to tell us if we've configured this
+    std::bitset<5> sensorStatus;
+    uint64_t totalTime_ms;
+};
+
+struct __attribute__((packed)) TransmitFlightData {
+    // data collected by sensors
+    Vector3 lsm_gyro, lsm_acc;                      // Gyroscope/Accelerometer  (LSM6DS032 Chip)
+    Vector3 adxl_acc;                               // Acceleromter (AXDL375 Chip)
+    Vector3 bno_gyro, bno_acc, bno_mag;             // Gyro/Accel/Magnetic Flux (BNO055 Chip)
+    Quaternion bno_orientation;                     // Orientation (also BNO055)
+    float lsm_temp, adxl_temp, bno_temp;            // Temperature (all chips that record)
+    float bmp_temp, bmp_press, bmp_alt;             // Barometer Pressure/Altitude (BMP388 Chip)
 
     std::bitset<5> sensorStatus;
     uint64_t totalTime_ms;
@@ -62,6 +71,8 @@ class FLIGHT {
         void incrementTime();
         void writeSD(bool, File &);
         void writeSERIAL(bool, Stream &);  // Strema allows Teensy USB as well
+        void writeDataToTeensy(Stream &);
+        void readDataFromTeensy(Stream &);
 
         // helper functions
         bool isCal();
@@ -69,6 +80,8 @@ class FLIGHT {
         bool isDescent();
         bool isLanded();
         bool calibrate();
+        void initTransferSerial(Stream &);
+        TransmitFlightData prepareToTransmit(FlightData);
 
     private:
         int accel_liftoff_threshold;        // METERS PER SECOND^2
@@ -82,8 +95,14 @@ class FLIGHT {
         uint16_t deltaTime_ms;
         uint64_t runningTime_ms;
 
+        // data processing variables
+        float off_alt, prev_alt, v_vel;
+        Vector3 angular_offset;             // GPS has some orientation bias -- this corrects when calibrated.
+        bool offset_calibrated;             // flag to tell us if we've configured this
+
         bool calibrated = false;
         STATES STATE;
+        SerialTransfer myTransfer;
 };
 
 #endif

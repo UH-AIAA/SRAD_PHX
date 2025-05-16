@@ -135,3 +135,42 @@ void FLIGHT::writeSERIAL(bool headers, Stream &Serial1) {
 
     return;
 }
+
+void FLIGHT::writeDataToTeensy(Stream &outputSerial) {
+    TransmitFlightData transfer = prepareToTransmit(output);
+    myTransfer.sendDatum(transfer);
+}
+
+void FLIGHT::readDataFromTeensy(Stream &inputSerial) {
+    TransmitFlightData receiveStruct;
+    if(myTransfer.available()) {
+        myTransfer.rxObj(receiveStruct);
+    }
+    output = decodeTransmission(receiveStruct);
+}
+
+void FLIGHT::initTransferSerial(Stream &transferSerial) {
+    myTransfer.begin(transferSerial);
+}
+
+FlightData FLIGHT::decodeTransmission(TransmitFlightData s) {
+    return {
+        s.lsm_gyro, s.lsm_acc,
+        s.adxl_acc,
+        s.bno_gyro, s.bno_acc, s.bno_mag,
+        s.bno_orientation,
+        s.lsm_temp, s.adxl_temp, s.bno_temp,
+        s.bmp_temp, s.bmp_press, s.bmp_alt
+    }
+}
+
+TransmitFlightData FLIGHT::prepareToTransmit(FlightData s) {
+    return {
+        s.lsm_gyro, s.lsm_acc,
+        s.adxl_acc,
+        s.bno_gyro, s.bno_acc, s.bno_mag,
+        s.bno_orientation,
+        s.lsm_temp, s.adxl_temp, s.bno_temp,
+        s.bmp_temp, s.bmp_press, s.bmp_alt
+    };
+}
