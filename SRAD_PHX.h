@@ -23,11 +23,6 @@ struct FlightData {
     float lsm_temp, adxl_temp, bno_temp;            // Temperature (all chips that record)
     float bmp_temp, bmp_press, bmp_alt;             // Barometer Pressure/Altitude (BMP388 Chip)
 
-    // data processing variables
-    float off_alt, prev_alt, v_vel, offset_alt_fixed_temp;
-    Vector3 angular_offset;             // GPS has some orientation bias -- this corrects when calibrated.
-    bool offset_calibrated;             // flag to tell us if we've configured this
-
     std::bitset<5> sensorStatus;
     uint64_t totalTime_ms;
 };
@@ -82,6 +77,13 @@ class FLIGHT {
         Adafruit_GPS& last_gps;             // used for data collection, for some reason the GPS stores it
         uint16_t deltaTime_ms;
         uint64_t runningTime_ms;
+
+        // data processing variables
+        float alt_offset;                   // DO NOT MODIFY
+        float prev_alt, v_vel, offset_alt_fixed_temp;
+        Vector3 angular_offset;             // GPS has some orientation bias -- this corrects when calibrated.
+        bool offset_calibrated;             // flag to tell us if we've configured this
+
 
         bool calibrated = false;
         STATES STATE;
