@@ -81,6 +81,7 @@ class FLIGHT {
         bool isLanded();
         bool calibrate();
         void initTransferSerial(Stream &);
+        FlightData decodeTransmission(TransmitFlightData);
         TransmitFlightData prepareToTransmit(FlightData);
 
     private:

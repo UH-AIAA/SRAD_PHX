@@ -161,7 +161,7 @@ FlightData FLIGHT::decodeTransmission(TransmitFlightData s) {
         s.bno_orientation,
         s.lsm_temp, s.adxl_temp, s.bno_temp,
         s.bmp_temp, s.bmp_press, s.bmp_alt
-    }
+    };
 }
 
 TransmitFlightData FLIGHT::prepareToTransmit(FlightData s) {

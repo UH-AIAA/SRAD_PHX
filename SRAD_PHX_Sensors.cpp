@@ -56,7 +56,7 @@ uint8_t FLIGHT::read_BMP(Adafruit_BMP3XX &BMP) {
     }
     output.bmp_temp = BMP.temperature;
     output.bmp_press = BMP.pressure;
-    output.bmp_alt = BMP.readAltitude(1013.25) - output.off_alt;
+    output.bmp_alt = BMP.readAltitude(1013.25) - off_alt;
 
     output.sensorStatus.reset(1);
     return 0;
