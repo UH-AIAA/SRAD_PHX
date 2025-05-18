@@ -57,10 +57,16 @@ class FLIGHT {
         land_time_threshold(l1), land_altitude_threshold(l2), data_header(h), last_gps(g), output(o) {
             STATE = STATES::PRE_NO_CAL;
             runningTime_ms = 0;
+
+            // initialize arrays!
+            altReadings_ind = 0;
+            for(int i = 0; i < 10; i++) {
+                altReadings[i] = 0;
+            }
         }
         // constructor to automatically cast integer outputs from helpfer functions
         // FLIGHT(int stateVal) :  STATE(static_cast<STATES>(stateVal)) {}
-        
+
         // high level functions
         void calculateState();
         uint8_t read_LSM(Adafruit_LSM6DSO32 &);
@@ -89,7 +95,7 @@ class FLIGHT {
         int accel_liftoff_time_threshold;   // MILLISECONDS
         int land_time_threshold;            // MILLISECONDS
         int land_altitude_threshold;        // METERS
-        
+
         FlightData& output;
         String data_header;
         Adafruit_GPS& last_gps;             // used for data collection, for some reason the GPS stores it
@@ -100,6 +106,9 @@ class FLIGHT {
         float off_alt, prev_alt, v_vel;
         Vector3 angular_offset;             // GPS has some orientation bias -- this corrects when calibrated.
         bool offset_calibrated;             // flag to tell us if we've configured this
+
+        float altReadings[10];
+        uint8_t altReadings_ind;
 
         bool calibrated = false;
         STATES STATE;
