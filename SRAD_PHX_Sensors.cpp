@@ -19,14 +19,14 @@
 uint8_t FLIGHT::read_LSM(Adafruit_LSM6DSO32 &LSM) {
     sensors_event_t accel, gyro, temp;
 
-  // Attempt to read sensor data
+    // Attempt to read sensor data
     if(!LSM.getEvent(&accel, &gyro, &temp))
     {
         output.sensorStatus.set(0);
         return 1;  // Return true if read fails
     }
 
-  // Store gyroscope data
+    // Store gyroscope data
     output.lsm_gyro.x = gyro.gyro.x;
     output.lsm_gyro.y = gyro.gyro.y;
     output.lsm_gyro.z = gyro.gyro.z;
@@ -56,8 +56,19 @@ uint8_t FLIGHT::read_BMP(Adafruit_BMP3XX &BMP) {
     }
     output.bmp_temp = BMP.temperature;
     output.bmp_press = BMP.pressure;
+
     output.bmp_alt = BMP.readAltitude(1013.25) - off_alt;
 
+    
+
+
+    if(STATE < STATES::FLIGHT_ASCENT) {
+        output.bmp_alt = BMP.readAltitude(1013.25);   //uncalibrated/true altitude
+    } else {
+        output.bmp_alt = BMP.readAltitude(1013.25) - alt_offset;    //sea level can fluctuate under +/- 7 
+                                                                    // depends on the data of the day. 
+                                                                    //But 1013.25 is an acceptable value.
+    }
     altReadings[altReadings_ind] = output.bmp_alt;
     if(++altReadings_ind == 10) {
         altReadings_ind = 0;
@@ -167,7 +178,6 @@ uint8_t FLIGHT::read_GPS(Adafruit_GPS &GPS) {
         }
     }
 
-    Serial.println("GPS timeout or no fix");
     output.sensorStatus.set(4);
     return 1;
 }

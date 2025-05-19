@@ -10,6 +10,7 @@
 
 #include "SRAD_PHX.h"
 
+
 /**
  * @brief gets flight state
  * 
@@ -20,12 +21,14 @@
 void FLIGHT::calculateState() {
     switch(STATE) {
         case(STATES::PRE_NO_CAL):
+            AltitudeCalibrate(); //check altitude offset and set it
             if(calibrate()) {
                 STATE = STATES::PRE_CAL;
             }
             break;
 
         case(STATES::PRE_CAL):
+            AltitudeCalibrate(); //check altitude offset and set it
             if(isAscent()) {
                 STATE = STATES::FLIGHT_ASCENT;
             }
@@ -105,11 +108,30 @@ bool FLIGHT::isDescent() {
 
 }
 bool FLIGHT::isLanded() {
-
+    if(!output.sensorStatus.test(0)) {
+        if (output.adxl_acc.z < 2 && output.adxl_acc.z >= 0){
+            return true;
+        }
+    } else {
+        if (output.bmp_alt <=  alt_offset + 10){    // if the current altitude is less than the offset altitude + 10m 
+                                                    // then return True to indicate the rocket is landed
+        return true;
+        }
+    }
+    
+    return false;
 }
 
 bool FLIGHT::calibrate() {
     // calibrate for GPS offset, possibly of the earth spinning?
     //
     // additionally calibrate altitude offset
+
+
 }
+bool FLIGHT::AltitudeCalibrate(){
+    // save the offset to the current altitude when the function is called
+    alt_offset = output.bmp_alt;   
+    
+}
+

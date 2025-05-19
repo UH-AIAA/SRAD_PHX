@@ -36,7 +36,7 @@ struct __attribute__((packed)) TransmitFlightData {
     Quaternion bno_orientation;                     // Orientation (also BNO055)
     float lsm_temp, adxl_temp, bno_temp;            // Temperature (all chips that record)
     float bmp_temp, bmp_press, bmp_alt;             // Barometer Pressure/Altitude (BMP388 Chip)
-
+  
     std::bitset<5> sensorStatus;
     uint64_t totalTime_ms;
 };
@@ -79,6 +79,8 @@ class FLIGHT {
         void writeSERIAL(bool, Stream &);  // Strema allows Teensy USB as well
         void writeDataToTeensy(Stream &);
         void readDataFromTeensy(Stream &);
+        void writeDEBUG(bool, Stream &);
+
 
         // helper functions
         bool isCal();
@@ -86,9 +88,11 @@ class FLIGHT {
         bool isDescent();
         bool isLanded();
         bool calibrate();
+
         void initTransferSerial(Stream &);
         FlightData decodeTransmission(TransmitFlightData);
         TransmitFlightData prepareToTransmit(FlightData);
+        bool AltitudeCalibrate();
 
     private:
         int accel_liftoff_threshold;        // METERS PER SECOND^2
@@ -103,12 +107,14 @@ class FLIGHT {
         uint64_t runningTime_ms;
 
         // data processing variables
-        float off_alt, prev_alt, v_vel;
+        float alt_offset;                   // DO NOT MODIFY
+        float prev_alt, v_vel, offset_alt_fixed_temp;
         Vector3 angular_offset;             // GPS has some orientation bias -- this corrects when calibrated.
         bool offset_calibrated;             // flag to tell us if we've configured this
-
+        
         float altReadings[10];
         uint8_t altReadings_ind;
+
 
         bool calibrated = false;
         STATES STATE;
