@@ -195,3 +195,152 @@ void FLIGHT::writeDEBUG(bool headers, Stream &outputSerial) {
 
     return;
 }
+
+void FLIGHT::writeDataToTeensy(Stream &outputSerial) {
+    // TransmitFlightData transfer = prepareToTransmit(output);
+    
+    // initialize transmission size
+    uint_fast16_t trSz = 0;
+    
+    // transmit struct field by field;
+    trSz = myTransfer.txObj(output.lsm_gyro.x, trSz);
+    trSz = myTransfer.txObj(output.lsm_gyro.y, trSz);
+    trSz = myTransfer.txObj(output.lsm_gyro.z, trSz);
+
+    trSz = myTransfer.txObj(output.lsm_acc.x, trSz);
+    trSz = myTransfer.txObj(output.lsm_acc.y, trSz);
+    trSz = myTransfer.txObj(output.lsm_acc.z, trSz);
+
+    trSz = myTransfer.txObj(output.adxl_acc.x, trSz);
+    trSz = myTransfer.txObj(output.adxl_acc.y, trSz);
+    trSz = myTransfer.txObj(output.adxl_acc.z, trSz);
+
+    trSz = myTransfer.txObj(output.bno_gyro.x, trSz);
+    trSz = myTransfer.txObj(output.bno_gyro.y, trSz);
+    trSz = myTransfer.txObj(output.bno_gyro.z, trSz);
+
+    trSz = myTransfer.txObj(output.bno_acc.x, trSz);
+    trSz = myTransfer.txObj(output.bno_acc.y, trSz);
+    trSz = myTransfer.txObj(output.bno_acc.z, trSz);
+
+    trSz = myTransfer.txObj(output.bno_mag.x, trSz);
+    trSz = myTransfer.txObj(output.bno_mag.x, trSz);
+    trSz = myTransfer.txObj(output.bno_mag.x, trSz);
+
+    trSz = myTransfer.txObj(output.bno_orientation.w, trSz);
+    trSz = myTransfer.txObj(output.bno_orientation.x, trSz);
+    trSz = myTransfer.txObj(output.bno_orientation.y, trSz);
+    trSz = myTransfer.txObj(output.bno_orientation.z, trSz);
+
+    trSz = myTransfer.txObj(output.lsm_temp, trSz);
+    trSz = myTransfer.txObj(output.adxl_temp, trSz);
+    trSz = myTransfer.txObj(output.bno_temp, trSz);
+    trSz = myTransfer.txObj(output.bmp_temp, trSz);
+    trSz = myTransfer.txObj(output.bmp_press, trSz);
+    trSz = myTransfer.txObj(output.bmp_alt, trSz);
+
+    uint_fast8_t sensor1 = output.sensorStatus[0];
+    uint_fast8_t sensor2 = output.sensorStatus[1];
+    uint_fast8_t sensor3 = output.sensorStatus[2];
+    uint_fast8_t sensor4 = output.sensorStatus[3];
+    // uint_fast8_t sensor5 = output.sensorStatus[4];
+
+    trSz = myTransfer.txObj(sensor1, trSz);
+    trSz = myTransfer.txObj(sensor2, trSz);
+    trSz = myTransfer.txObj(sensor3, trSz);
+    trSz = myTransfer.txObj(sensor4, trSz);
+    // trSz = myTransfer.txObj(sensor5, trSz);
+
+    // trSz = myTransfer.txObj(output.totalTime_ms, trSz);
+    
+    myTransfer.sendData(trSz);
+}
+
+void FLIGHT::readDataFromTeensy(Stream &inputSerial) {
+    // TransmitFlightData receiveStruct;
+    if(myTransfer.available()) {
+        // initialize transmission size
+        uint_fast16_t trSz = 0;
+
+        // transmit struct field by field;
+        trSz = myTransfer.rxObj(output.lsm_gyro.x, trSz);
+        trSz = myTransfer.rxObj(output.lsm_gyro.y, trSz);
+        trSz = myTransfer.rxObj(output.lsm_gyro.z, trSz);
+
+        trSz = myTransfer.rxObj(output.lsm_acc.x, trSz);
+        trSz = myTransfer.rxObj(output.lsm_acc.y, trSz);
+        trSz = myTransfer.rxObj(output.lsm_acc.z, trSz);
+
+        trSz = myTransfer.rxObj(output.adxl_acc.x, trSz);
+        trSz = myTransfer.rxObj(output.adxl_acc.y, trSz);
+        trSz = myTransfer.rxObj(output.adxl_acc.z, trSz);
+
+        trSz = myTransfer.rxObj(output.bno_gyro.x, trSz);
+        trSz = myTransfer.rxObj(output.bno_gyro.y, trSz);
+        trSz = myTransfer.rxObj(output.bno_gyro.z, trSz);
+
+        trSz = myTransfer.rxObj(output.bno_acc.x, trSz);
+        trSz = myTransfer.rxObj(output.bno_acc.y, trSz);
+        trSz = myTransfer.rxObj(output.bno_acc.z, trSz);
+
+        trSz = myTransfer.rxObj(output.bno_mag.x, trSz);
+        trSz = myTransfer.rxObj(output.bno_mag.x, trSz);
+        trSz = myTransfer.rxObj(output.bno_mag.x, trSz);
+
+        trSz = myTransfer.rxObj(output.bno_orientation.w, trSz);
+        trSz = myTransfer.rxObj(output.bno_orientation.x, trSz);
+        trSz = myTransfer.rxObj(output.bno_orientation.y, trSz);
+        trSz = myTransfer.rxObj(output.bno_orientation.z, trSz);
+
+        trSz = myTransfer.rxObj(output.lsm_temp, trSz);
+        trSz = myTransfer.rxObj(output.adxl_temp, trSz);
+        trSz = myTransfer.rxObj(output.bno_temp, trSz);
+        trSz = myTransfer.rxObj(output.bmp_temp, trSz);
+        trSz = myTransfer.rxObj(output.bmp_press, trSz);
+        trSz = myTransfer.rxObj(output.bmp_alt, trSz);
+
+        uint_fast8_t sensor1 = output.sensorStatus[0];
+        uint_fast8_t sensor2 = output.sensorStatus[1];
+        uint_fast8_t sensor3 = output.sensorStatus[2];
+        uint_fast8_t sensor4 = output.sensorStatus[3];
+        // uint_fast8_t sensor5 = output.sensorStatus[4];
+
+        trSz = myTransfer.rxObj(sensor1, trSz);
+        trSz = myTransfer.rxObj(sensor2, trSz);
+        trSz = myTransfer.rxObj(sensor3, trSz);
+        trSz = myTransfer.rxObj(sensor4, trSz);
+        // trSz = myTransfer.rxObj(sensor5, trSz);
+
+        // trSz = myTransfer.rxObj(output.totalTime_ms, trSz);
+
+    }
+    // output = decodeTransmission(receiveStruct);
+}
+
+void FLIGHT::initTransferSerial(Stream &transferSerial) {
+    myTransfer.begin(transferSerial);
+}
+
+// FlightData FLIGHT::decodeTransmission(TransmitFlightData s) {
+//     return {
+//         s.lsm_gyro, s.lsm_acc,
+//         s.adxl_acc,
+//         s.bno_gyro, s.bno_acc, s.bno_mag,
+//         s.bno_orientation,
+//         s.lsm_temp, s.adxl_temp, s.bno_temp,
+//         s.bmp_temp, s.bmp_press, s.bmp_alt,
+//         s.sensorStatus
+//     };
+// }
+
+// TransmitFlightData FLIGHT::prepareToTransmit(FlightData s) {
+//     return {
+//         s.lsm_gyro, s.lsm_acc,
+//         s.adxl_acc,
+//         s.bno_gyro, s.bno_acc, s.bno_mag,
+//         s.bno_orientation,
+//         s.lsm_temp, s.adxl_temp, s.bno_temp,
+//         s.bmp_temp, s.bmp_press, s.bmp_alt,
+//         s.sensorStatus
+//     };
+// }
