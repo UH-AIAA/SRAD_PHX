@@ -167,7 +167,6 @@ uint8_t FLIGHT::read_GPS(Adafruit_GPS &GPS) {
         }
     }
 
-    Serial.println("GPS timeout or no fix");
     output.sensorStatus.set(4);
     return 1;
 }

@@ -143,46 +143,46 @@ void FLIGHT::writeDEBUG(bool headers, Stream &outputSerial) {
         return;
     }
 
-    outputSerial.print(output.totalTime_ms); outputSerial.print(", \n");
+    outputSerial.print("Uptime (ms): ");outputSerial.print(output.totalTime_ms); outputSerial.print(", \n");
     if(last_gps.fix) {
-        outputSerial.println("GPS Latitude Degrees: ");outputSerial.print(last_gps.latitudeDegrees, 6); outputSerial.print(", ");
-        outputSerial.print("GPS Longitude Degrees: ");outputSerial.print(last_gps.longitudeDegrees, 6); outputSerial.print(",");
+        outputSerial.print("GPS Latitude Degrees: ");outputSerial.print(last_gps.latitudeDegrees, 6); outputSerial.println(", ");
+        outputSerial.print("GPS Longitude Degrees: ");outputSerial.print(last_gps.longitudeDegrees, 6); outputSerial.println(",");
         outputSerial.print("GPS satellites: ");outputSerial.print((int32_t)last_gps.satellites); outputSerial.print(",");
         outputSerial.print("GPS speed: ");outputSerial.print(last_gps.speed, 3); outputSerial.print(",");
         outputSerial.print("GPS angle: ");outputSerial.print(last_gps.angle, 3); outputSerial.print(",");
-        outputSerial.print("GPS altitude: ");outputSerial.print(last_gps.altitude, 3); //outputSerial.print(",");
+        outputSerial.print("GPS altitude: ");outputSerial.println(last_gps.altitude, 3); outputSerial.println();
     } else {
-        outputSerial.println("-1,No fix,-1,No fix,0,-1,-1,-1,");
+        outputSerial.println("-1,No fix,-1,No fix,0,-1,-1,-1,\n");
     }
     //BNO data
         //orientation
-    outputSerial.println("BNO W-Orientation: ");outputSerial.print(output.bno_orientation.w, 5); outputSerial.print(",");
+    outputSerial.print("BNO W-Orientation: ");outputSerial.print(output.bno_orientation.w, 5); outputSerial.print(",");
     outputSerial.print("BNO X-Orientation: ");outputSerial.print(output.bno_orientation.x, 5); outputSerial.print(",");
     outputSerial.print("BNO Y-Orientation: ");outputSerial.print(output.bno_orientation.y, 5); outputSerial.print(",");
-    outputSerial.print("BNO Z-Orientation: ");outputSerial.print(output.bno_orientation.z, 5); outputSerial.print(",");
+    outputSerial.print("BNO Z-Orientation: ");outputSerial.print(output.bno_orientation.z, 5); outputSerial.println(",");
         //gyro
-    outputSerial.println("BNO X-Gyro: ");outputSerial.print(output.bno_gyro.x, 5); outputSerial.print(",");
+    outputSerial.print("BNO X-Gyro: ");outputSerial.print(output.bno_gyro.x, 5); outputSerial.print(",");
     outputSerial.print("BNO Y-Gyro: ");outputSerial.print(output.bno_gyro.y, 5); outputSerial.print(",");
-    outputSerial.print("BNO Z-Gyro: ");outputSerial.print(output.bno_gyro.z, 5); outputSerial.print(",");
+    outputSerial.print("BNO Z-Gyro: ");outputSerial.print(output.bno_gyro.z, 5); outputSerial.println(",");
         //Accel
-    outputSerial.println("BNO X-Accel: ");outputSerial.print(output.bno_acc.x, 4); outputSerial.print(",");
+    outputSerial.print("BNO X-Accel: ");outputSerial.print(output.bno_acc.x, 4); outputSerial.print(",");
     outputSerial.print("BNO Y-Accel: ");outputSerial.print(output.bno_acc.y, 4); outputSerial.print(",");
-    outputSerial.print("BNO Z-Accel: ");outputSerial.print(output.bno_acc.z, 4); outputSerial.print(",");
+    outputSerial.print("BNO Z-Accel: ");outputSerial.print(output.bno_acc.z, 4); outputSerial.println(",");
 
     //ADXL data
-    outputSerial.println("ADXL X_Accel: ");outputSerial.print(output.adxl_acc.x, 2); outputSerial.print(",");
+    outputSerial.print("ADXL X_Accel: ");outputSerial.print(output.adxl_acc.x, 2); outputSerial.print(",");
     outputSerial.print("ADXL Y_Accel: ");outputSerial.print(output.adxl_acc.y, 2); outputSerial.print(",");
-    outputSerial.print("ADXL Z_Accel: ");outputSerial.print(output.adxl_acc.z, 2); outputSerial.print(",");
+    outputSerial.print("ADXL Z_Accel: ");outputSerial.print(output.adxl_acc.z, 2); outputSerial.println(",");
 
     //BMP data
-    outputSerial.println("BMP Pressure: ");outputSerial.print(output.bmp_press, 6); outputSerial.print(",");
-    outputSerial.print("BMP Altitude: ");outputSerial.print(output.bmp_alt, 4); outputSerial.print(",");
+    outputSerial.print("BMP Pressure: ");outputSerial.print(output.bmp_press, 6); outputSerial.print(",");
+    outputSerial.print("BMP Altitude: ");outputSerial.print(output.bmp_alt, 4); outputSerial.println(",");
 
     //Temperature data
-    outputSerial.println("LSM Temp: ");outputSerial.print(output.lsm_temp, 2); outputSerial.print(",");
+    outputSerial.print("LSM Temp: ");outputSerial.print(output.lsm_temp, 2); outputSerial.print(",");
     outputSerial.print("ADXL Temp: ");outputSerial.print(output.adxl_temp, 2); outputSerial.print(",");
     outputSerial.print("BNO Temp: ");outputSerial.print(output.bno_temp, 2); outputSerial.print(",");
-    outputSerial.print("BMP Temp: ");outputSerial.print(output.bmp_temp, 2); outputSerial.println();
+    outputSerial.print("BMP Temp: ");outputSerial.print(output.bmp_temp, 2); outputSerial.println("\n");
 
     //Sensor status
     outputSerial.println("Sensor Status:");
@@ -190,7 +190,7 @@ void FLIGHT::writeDEBUG(bool headers, Stream &outputSerial) {
     outputSerial.print(output.sensorStatus.test(1)); outputSerial.print(", ");
     outputSerial.print(output.sensorStatus.test(2)); outputSerial.print(", ");
     outputSerial.print(output.sensorStatus.test(3)); outputSerial.print(", ");
-    outputSerial.print(output.sensorStatus.test(4)); outputSerial.println();
+    outputSerial.print(output.sensorStatus.test(4)); outputSerial.println("\n");
     outputSerial.flush();
 
     return;
