@@ -28,18 +28,18 @@ struct FlightData {
     uint64_t totalTime_ms;
 };
 
-struct __attribute__((packed)) TransmitFlightData {
-    // data collected by sensors
-    Vector3 lsm_gyro, lsm_acc;                      // Gyroscope/Accelerometer  (LSM6DS032 Chip)
-    Vector3 adxl_acc;                               // Acceleromter (AXDL375 Chip)
-    Vector3 bno_gyro, bno_acc, bno_mag;             // Gyro/Accel/Magnetic Flux (BNO055 Chip)
-    Quaternion bno_orientation;                     // Orientation (also BNO055)
-    float lsm_temp, adxl_temp, bno_temp;            // Temperature (all chips that record)
-    float bmp_temp, bmp_press, bmp_alt;             // Barometer Pressure/Altitude (BMP388 Chip)
+// struct __attribute__((packed)) TransmitFlightData {
+//     // data collected by sensors
+//     Vector3 lsm_gyro, lsm_acc;                      // Gyroscope/Accelerometer  (LSM6DS032 Chip)
+//     Vector3 adxl_acc;                               // Acceleromter (AXDL375 Chip)
+//     Vector3 bno_gyro, bno_acc, bno_mag;             // Gyro/Accel/Magnetic Flux (BNO055 Chip)
+//     Quaternion bno_orientation;                     // Orientation (also BNO055)
+//     float lsm_temp, adxl_temp, bno_temp;            // Temperature (all chips that record)
+//     float bmp_temp, bmp_press, bmp_alt;             // Barometer Pressure/Altitude (BMP388 Chip)
   
-    std::bitset<5> sensorStatus;
-    uint64_t totalTime_ms;
-};
+//     std::bitset<5> sensorStatus;
+//     uint64_t totalTime_ms;
+// };
 
 enum STATES {
     PRE_NO_CAL = 0,
@@ -90,8 +90,8 @@ class FLIGHT {
         bool calibrate();
 
         void initTransferSerial(Stream &);
-        FlightData decodeTransmission(TransmitFlightData);
-        TransmitFlightData prepareToTransmit(FlightData);
+        // FlightData decodeTransmission(TransmitFlightData);
+        // TransmitFlightData prepareToTransmit(FlightData);
         bool AltitudeCalibrate();
 
     private:

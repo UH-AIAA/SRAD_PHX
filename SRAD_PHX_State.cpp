@@ -91,7 +91,7 @@ bool FLIGHT::isAscent() {
 }
 bool FLIGHT::isDescent() {
     // use altimeter primarily to detect apogee based off of trend in data
-    if(!ouput.sensorStatus.test(1)) {
+    if(!output.sensorStatus.test(1)) {
         uint8_t desc_samples;                                   // tracks the number of samples with a descending delta
         for(int i = 0; i < 9; i++) {
             uint8_t index1 = (altReadings_ind + i + 1) % 10;        // get an index, starting with our oldest value

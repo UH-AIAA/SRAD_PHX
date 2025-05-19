@@ -57,10 +57,7 @@ uint8_t FLIGHT::read_BMP(Adafruit_BMP3XX &BMP) {
     output.bmp_temp = BMP.temperature;
     output.bmp_press = BMP.pressure;
 
-    output.bmp_alt = BMP.readAltitude(1013.25) - off_alt;
-
-    
-
+    output.bmp_alt = BMP.readAltitude(1013.25) - alt_offset;
 
     if(STATE < STATES::FLIGHT_ASCENT) {
         output.bmp_alt = BMP.readAltitude(1013.25);   //uncalibrated/true altitude
@@ -160,7 +157,7 @@ uint8_t FLIGHT::read_GPS(Adafruit_GPS &GPS) {
 
     while (millis() < timeout) {
         while (GPS.available()) {
-            char c = GPS.read();
+            GPS.read();
 
             if (GPS.newNMEAreceived()) {
                 // Serial.println(GPS.lastNMEA());
