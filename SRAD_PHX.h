@@ -57,6 +57,7 @@ class FLIGHT {
         void incrementTime();
         void writeSD(bool, File &);
         void writeSERIAL(bool, Stream &);  // Strema allows Teensy USB as well
+        void writeDEBUG(bool, Stream &);
 
         // helper functions
         bool isCal();
